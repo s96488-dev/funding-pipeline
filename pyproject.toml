@@ -1,0 +1,51 @@
+[project]
+name = "funding-pipeline"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "vovcan", email = "s96488@pollub.edu.pl" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.142.2",
+    "pydantic-settings>=2.15.0",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+funding-pipeline = "funding_pipeline:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "mypy>=2.4.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+
+[tool.mypy]
+strict = true
+python_version = "3.13"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: tests that need Postgres or Kafka",
+    "spark: slow tests that start a SparkSession",
+]
+addopts  = ["-ra" , "--strict-markers"]
+testpaths = [
+    "tests"
+]
+
+[tool.ruff.lint]
+select = [ "E" ,"F", "I","B" ,"UP" ]
