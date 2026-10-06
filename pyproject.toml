@@ -42,7 +42,7 @@ markers = [
     "integration: tests that need Postgres or Kafka",
     "spark: slow tests that start a SparkSession",
 ]
-addopts  = ["-ra" , "--strict-markers"]
+addopts = ["-ra", "--strict-markers"]
 testpaths = [
     "tests"
 ]
