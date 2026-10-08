@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.142.2",
+    "pydantic>=2.13.5",
     "pydantic-settings>=2.15.0",
     "uvicorn>=0.54.0",
 ]
@@ -37,6 +38,7 @@ line-length = 88
 [tool.mypy]
 strict = true
 python_version = "3.13"
+plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 markers = [
