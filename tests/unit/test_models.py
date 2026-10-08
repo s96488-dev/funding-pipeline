@@ -9,7 +9,7 @@ from funding_pipeline.models import AssetSnapshot
 
 @pytest.fixture
 def snapshot_data() -> dict[str, Any]:
-    return{
+    return {
         "coin_name": "BTC",
         "mark_px": "81200",
         "funding": "0.0001",
@@ -19,6 +19,7 @@ def snapshot_data() -> dict[str, Any]:
         "oracle_px": "81300",
         "timestamp": datetime(2026, 10, 8, 9, 0, tzinfo=UTC),
     }
+
 
 def test_numeric_strings_become_floats(snapshot_data: dict[str, Any]) -> None:
     snapshot = AssetSnapshot(**snapshot_data)
