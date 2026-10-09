@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.142.2",
     "httpx2>=2.13.1",
+    "pandas>=3.0.6",
     "pydantic>=2.13.5",
     "pydantic-settings>=2.15.0",
     "tenacity>=9.2.1",
@@ -28,6 +29,7 @@ dev = [
     "httpx>=0.28.1",
     "httpx2>=2.13.1",
     "mypy>=2.4.0",
+    "pandas-stubs>=3.0.5.260914",
     "pytest>=9.1.1",
     "ruff>=0.16.10",
 ]
