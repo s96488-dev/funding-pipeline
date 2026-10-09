@@ -12,6 +12,7 @@ dependencies = [
     "httpx2>=2.13.1",
     "pydantic>=2.13.5",
     "pydantic-settings>=2.15.0",
+    "tenacity>=9.2.1",
     "uvicorn>=0.54.0",
 ]
 

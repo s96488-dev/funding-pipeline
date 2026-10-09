@@ -1,9 +1,12 @@
 from datetime import UTC, datetime
 from typing import Any
 
+import httpx2
 import pytest
 
-from funding_pipeline.ingestion.hyperliquid_client import parse_snapshots
+from funding_pipeline.ingestion.hyperliquid_client import _is_retryable, parse_snapshots
+
+URL = "https://api.hyperliquid.xyz/info"
 
 SNAPSHOT_TIME = datetime(2026, 10, 9, 9, 0, tzinfo=UTC)
 
@@ -60,3 +63,29 @@ def test_mismatched_list_lengths_raise(payload: list[Any]) -> None:
     payload[1].pop()
     with pytest.raises(ValueError):
         parse_snapshots(payload, SNAPSHOT_TIME)
+
+
+def make_status_error(status_code: int) -> httpx2.HTTPStatusError:
+    request = httpx2.Request("POST", URL)
+    response = httpx2.Response(status_code, request=request)
+    return httpx2.HTTPStatusError("error", request=request, response=response)
+
+
+@pytest.mark.parametrize("status_code", [429, 500, 502, 503, 504])
+def test_retryable_status_codes(status_code: int) -> None:
+    assert _is_retryable(make_status_error(status_code))
+
+
+@pytest.mark.parametrize("status_code", [400, 401, 404, 422])
+def test_client_errors_are_not_retried(status_code: int) -> None:
+    assert not _is_retryable(make_status_error(status_code))
+
+
+def test_network_errors_are_retried() -> None:
+    assert _is_retryable(httpx2.ConnectError("connection failed"))
+    assert _is_retryable(httpx2.ReadTimeout("timed out"))
+
+
+def test_other_errors_are_not_retried() -> None:
+    assert not _is_retryable(KeyError("universe"))
+    assert not _is_retryable(ValueError("bad data"))
