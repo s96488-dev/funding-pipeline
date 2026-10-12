@@ -1,4 +1,5 @@
 import logging
+import time
 
 from confluent_kafka import KafkaError, Message, Producer
 
@@ -44,12 +45,31 @@ def publish_snapshots(
     producer.flush()
 
 
+def run(settings: Settings) -> None:
+    producer = create_producer(settings)
+    try:
+        while True:
+            started = time.monotonic()
+            try:
+                snapshots = fetch_snapshots()
+                publish_snapshots(producer, snapshots, settings.snapshots_topic)
+                logger.info(
+                    "Published %s snapshots to %s",
+                    len(snapshots),
+                    settings.snapshots_topic,
+                )
+            except Exception:
+                logger.exception("Failed to fetch or publish snapshots")
+
+            gap = time.monotonic() - started
+            sleep_for = max(0, settings.poll_interval_seconds - gap)
+            time.sleep(sleep_for)
+    except KeyboardInterrupt:
+        logger.info("Program terminated by user.")
+        producer.flush()
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     settings = Settings()
-    producer = create_producer(settings)
-    snapshots = fetch_snapshots()
-    publish_snapshots(producer, snapshots, settings.snapshots_topic)
-    logger.info(
-        "Published %s snapshots to %s", len(snapshots), settings.snapshots_topic
-    )
+    run(settings)
