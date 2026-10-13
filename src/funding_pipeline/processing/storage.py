@@ -47,7 +47,8 @@ def insert_snapshots(engine: Engine, snapshots: list[AssetSnapshot]) -> int:
         insert(asset_snapshots)
         .values(rows)
         .on_conflict_do_nothing(index_elements=["coin_name", "timestamp"])
+        .returning(asset_snapshots.c.coin_name)
     )
     with engine.begin() as conn:
         result = conn.execute(stmt)
-    return result.rowcount
+        return len(result.fetchall())
