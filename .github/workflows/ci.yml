@@ -8,6 +8,10 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: ci
+      POSTGRES_PASSWORD: ci
+      POSTGRES_DB: ci
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v6
